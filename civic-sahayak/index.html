@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Civic Sahayak - AI for Citizens</title>
+<style>
+  :root{--bg:#0f172a;--card:#1e293b;--ink:#e2e8f0;--mute:#94a3b8;--acc:#38bdf8;--ok:#34d399;--warn:#fbbf24;--bad:#f87171}
+  *{box-sizing:border-box}
+  body{margin:0;font-family:system-ui,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--ink);line-height:1.5}
+  header{padding:28px 16px 8px;text-align:center}
+  header h1{margin:0;font-size:1.8rem}
+  header p{margin:6px 0 0;color:var(--mute)}
+  nav{display:flex;gap:8px;justify-content:center;padding:16px;flex-wrap:wrap}
+  nav button{background:var(--card);color:var(--ink);border:1px solid #334155;padding:10px 18px;border-radius:999px;cursor:pointer;font-size:.95rem}
+  nav button.on{background:var(--acc);color:#0f172a;font-weight:600;border-color:var(--acc)}
+  main{max-width:820px;margin:0 auto;padding:0 16px 48px}
+  section{display:none}section.on{display:block}
+  .card{background:var(--card);border-radius:14px;padding:18px;margin-bottom:16px}
+  label{display:block;margin:10px 0 4px;color:var(--mute);font-size:.85rem}
+  textarea,input,select{width:100%;padding:10px;border-radius:8px;border:1px solid #334155;background:#0b1220;color:var(--ink);font-size:1rem;font-family:inherit}
+  textarea{min-height:110px;resize:vertical}
+  .row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  @media(max-width:560px){.row{grid-template-columns:1fr}}
+  .go{margin-top:14px;background:var(--acc);color:#0f172a;border:0;padding:11px 22px;border-radius:8px;font-weight:700;cursor:pointer;font-size:1rem}
+  .go.alt{background:#334155;color:var(--ink);font-weight:500}
+  .tag{display:inline-block;padding:3px 10px;border-radius:999px;font-size:.8rem;font-weight:600;margin-right:6px}
+  .t-high{background:var(--bad);color:#0f172a}.t-med{background:var(--warn);color:#0f172a}.t-low{background:var(--ok);color:#0f172a}.t-cat{background:#334155}
+  pre{white-space:pre-wrap;background:#0b1220;padding:14px;border-radius:8px;border:1px solid #334155;font-family:inherit;font-size:.92rem}
+  a{color:var(--acc)}
+  .scheme h3{margin:0 0 4px}.scheme p{margin:4px 0;color:var(--mute)}
+  .small{font-size:.8rem;color:var(--mute)}
+  .chat{height:340px;overflow:auto;background:#0b1220;border-radius:8px;padding:12px;border:1px solid #334155}
+  .msg{margin:8px 0;padding:8px 12px;border-radius:10px;max-width:85%;white-space:pre-wrap}
+  .u{background:var(--acc);color:#0f172a;margin-left:auto}.b{background:#334155}
+  .chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+  .chips button{background:#0b1220;color:var(--mute);border:1px solid #334155;border-radius:999px;padding:5px 12px;cursor:pointer;font-size:.82rem}
+</style>
+</head>
+<body>
+<header>
+  <h1>🏛️ Civic Sahayak</h1>
+  <p>Report local issues in plain words. Find government schemes you qualify for. English + हिन्दी.</p>
+</header>
+<nav>
+  <button class="on" data-tab="report">Report an issue</button>
+  <button data-tab="schemes">Scheme finder</button>
+  <button data-tab="chat">Ask Sahayak (AI)</button>
+</nav>
+<main>
+
+<section id="report" class="on">
+  <div class="card">
+    <label for="issue">Describe the problem (English, Hindi or Hinglish)</label>
+    <textarea id="issue" placeholder="e.g. Bahut bada gaddha hai road par near Mariahu chauraha, kal ek bike gir gayi"></textarea>
+    <div class="row">
+      <div><label for="loc">Location / landmark</label><input id="loc" placeholder="Ward, colony, landmark"></div>
+      <div><label for="nm">Your name</label><input id="nm" placeholder="Optional"></div>
+    </div>
+    <button class="go" id="analyze">Analyze &amp; draft complaint</button>
+    <div class="chips">
+      <button data-ex="Street light has not worked for 2 weeks and the lane is very dark at night">Streetlight</button>
+      <button data-ex="Paani ki supply 3 din se band hai, pipeline leak ho rahi hai">Water</button>
+      <button data-ex="Garbage not collected for a week, bad smell and mosquitoes everywhere">Garbage</button>
+      <button data-ex="Open live wire hanging from pole near school, sparks yesterday">Live wire</button>
+    </div>
+  </div>
+  <div id="result"></div>
+</section>
+
+<section id="schemes">
+  <div class="card">
+    <div class="row">
+      <div><label>Age</label><input id="age" type="number" min="0" max="120" placeholder="e.g. 20"></div>
+      <div><label>Annual family income (₹)</label><input id="inc" type="number" min="0" placeholder="e.g. 150000"></div>
+      <div><label>Gender</label><select id="gen"><option value="">Select</option><option>Female</option><option>Male</option><option>Other</option></select></div>
+      <div><label>Occupation</label>
+        <select id="occ"><option value="">Select</option><option value="farmer">Farmer</option><option value="student">Student</option><option value="worker">Unorganised worker / labour</option><option value="entrepreneur">Small business / entrepreneur</option><option value="homemaker">Homemaker</option><option value="other">Other</option></select></div>
+      <div><label>Area</label><select id="area"><option value="">Select</option><option value="rural">Rural</option><option value="urban">Urban</option></select></div>
+      <div><label>Has a girl child under 10?</label><select id="girl"><option value="no">No</option><option value="yes">Yes</option></select></div>
+    </div>
+    <button class="go" id="match">Find schemes</button>
+    <p class="small">Indicative matching only. Eligibility rules change, so always confirm on the official website before applying.</p>
+  </div>
+  <div id="schemeOut"></div>
+</section>
+
+<section id="chat">
+  <div class="card">
+    <div class="chat" id="log"><div class="msg b">Namaste! Ask me about civic services, documents, or how to file a complaint.</div></div>
+    <div class="row" style="grid-template-columns:1fr auto;margin-top:10px">
+      <input id="q" placeholder="Ask anything, e.g. How do I apply for a ration card?">
+      <button class="go" style="margin:0" id="send">Send</button>
+    </div>
+    <p class="small">Needs the <code>/api/chat</code> serverless function with an <code>ANTHROPIC_API_KEY</code> set (see README). Without it, a built-in FAQ answers common questions.</p>
+  </div>
+</section>
+
+</main>
+<script src="app.js"></script>
+</body>
+</html>
